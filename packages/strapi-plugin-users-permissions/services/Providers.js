@@ -268,6 +268,55 @@ const getProfile = async (provider, query, callback) => {
         });
       break;
     }
+    case 'keycloak': {
+      const provider_url = 'https://' + _.get(grant['keycloak'], 'subdomain');
+      const keycloak = purest({
+        provider: 'keycloak',
+        config: {
+          keycloak: {
+            [provider_url]: {
+              __domain: {
+                auth: {
+                  auth: {bearer: '[0]'},
+                },
+              },
+              '{endpoint}': {
+                __path: {
+                  alias: '__default',
+                },
+              },
+            },
+          },
+        },
+      });
+      keycloak
+        .query()
+        .get('')
+        .auth()
+        .request((err, res, body) => {
+          if (err) {
+            callback(err);
+          } else {
+            const username =
+              body.strapiusername ||
+              body.username ||
+              body.nickname ||
+              body.uid ||
+              body.name;
+            const email =
+              body.strapiemail ||
+              body.email ||
+              body.mail ||
+              `${username.replace(/\s+/g, '.')}@strapi.io`;
+
+            callback(null, {
+              username,
+              email,
+            });
+          }
+        });
+      break;            
+    }
     case 'microsoft': {
       const microsoft = purest({
         provider: 'microsoft',

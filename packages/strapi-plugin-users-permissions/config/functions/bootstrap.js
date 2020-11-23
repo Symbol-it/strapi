@@ -78,6 +78,15 @@ module.exports = async () => {
       secret: '',
       callback: `${strapi.config.server.url}/auth/instagram/callback`,
     },
+    keycloak: {
+      enabled: false,
+      icon: 'book',
+      key: '',
+      secret: '',
+      callback: `${strapi.config.server.url}/auth/keycloak/callback`,
+      scope: [],
+      subdomain: '',
+    },
     vk: {
       enabled: false,
       icon: 'vk',
